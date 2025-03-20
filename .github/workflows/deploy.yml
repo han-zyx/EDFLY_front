@@ -21,8 +21,8 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          sudo docker build -t ${{ secrets.DOCKER_USERNAME }}/edflyweb:latest .
-          sudo docker push ${{ secrets.DOCKER_USERNAME }}/edflyweb:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/edflyweb:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/edflyweb:latest
           
 
       - name: Deploy to EC2
@@ -32,11 +32,11 @@ jobs:
           username: ec2-user
           key: ${{ secrets.SSH_KEY }}
           script: |
-            sudo docker stop edflyweb || true
-            sudo docker rm edflyweb || true
+            docker stop edflyweb || true
+            docker rm edflyweb || true
            
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/edflyweb:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/edflyweb:latest
             
-            sudo docker run -d -p 80:8080 --name edflyweb --restart unless-stopped ${{ secrets.DOCKER_USERNAME }}/edflyweb:latest
+            docker run -d -p 80:8080 --name edflyweb --restart unless-stopped ${{ secrets.DOCKER_USERNAME }}/edflyweb:latest
             
-            sudo docker ps -a
+            docker ps -a
