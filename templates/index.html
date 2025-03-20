@@ -2,16 +2,38 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>EDFLY</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>License Plate Detections</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to EDFLY</h1>
-    <p>This is the frontend served by Flask.</p>
-    <button onclick="sendData()">Send Test Data</button>
-
-    <p>This is for check deploy pipeline</p>
-
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <h1>EDFLY - License Plate Detections</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Time</th>
+            <th>License Plate</th>
+        </tr>
+        {% for detection in detections %}
+        <tr>
+            <td>{{ detection.id }}</td>
+            <td>{{ detection.time }}</td>
+            <td>{{ detection.license_plate_text }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 </body>
 </html>
