@@ -29,7 +29,7 @@ def receive_data():
         if "detections" in data:
             for detection in data["detections"]:
                 cur.execute(
-                    "INSERT INTO license_plates (id, detection_time, license_plate_text) VALUES (%s, %s, %s) ON CONFLICT (id) DO UPDATE SET detection_time = EXCLUDED.detection_time, license_plate_text = EXCLUDED.license_plate_text",
+                    "INSERT INTO license_plates (detection_id, detection_time, license_plate_text) VALUES (%s, %s, %s)",
                     (detection["id"], detection["time"].replace("Z", "").replace("T", " "), detection["license_plate_text"])
                 )
         conn.commit()
@@ -46,12 +46,20 @@ def home():
     try:
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute("SELECT id, detection_time, license_plate_text FROM license_plates ORDER BY detection_time DESC")
+        cur.execute("SELECT record_id, detection_id, detection_time, license_plate_text FROM license_plates ORDER BY detection_time DESC")
         rows = cur.fetchall()
         cur.close()
         conn.close()
 
-        detections = [{"id": row[0], "time": row[1].isoformat(), "license_plate_text": row[2]} for row in rows]
+        # Map database fields to front-end expected keys
+        detections = [
+            {
+                "record_id": row[0],           # Unique record ID
+                "id": row[1],                  # Detection ID from JSON
+                "time": row[2].isoformat(),    # Detection time
+                "license_plate_text": row[3]   # License plate text
+            } for row in rows
+        ]
         return render_template('index.html', detections=detections)
     except Exception as e:
         print(f"Error fetching data: {str(e)}")

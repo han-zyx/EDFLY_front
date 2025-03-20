@@ -42,13 +42,15 @@
     <h1>License Plate Detections</h1>
     <table>
         <tr>
-            <th>ID</th>
+            <th>Record ID</th>
+            <th>Detection ID</th>
             <th>Time</th>
             <th>License Plate</th>
         </tr>
         {% if detections %}
             {% for detection in detections %}
             <tr>
+                <td>{{ detection.record_id }}</td>
                 <td>{{ detection.id }}</td>
                 <td>{{ detection.time }}</td>
                 <td>{{ detection.license_plate_text }}</td>
@@ -56,7 +58,7 @@
             {% endfor %}
         {% else %}
             <tr>
-                <td colspan="3">No detections available</td>
+                <td colspan="4">No detections available</td>
             </tr>
         {% endif %}
     </table>
