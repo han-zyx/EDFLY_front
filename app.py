@@ -6,24 +6,26 @@ app = Flask(__name__)
 
 # Database connection using environment variables
 def get_db_connection():
-    return psycopg2.connect(
-        host=os.getenv("DB_HOST"),
-        database=os.getenv("DB_NAME"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASS")
-    )
+    try:
+        return psycopg2.connect(
+            host=os.getenv("DB_HOST"),
+            database=os.getenv("DB_NAME"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASS")
+        )
+    except Exception as e:
+        print(f"Database connection failed: {str(e)}")
+        raise
 
 @app.route('/receive', methods=['POST'])
 def receive_data():
     data = request.json
     print(f"Received on EC2: {data}")
     
-    # Optionally save received data to RDS
     try:
         conn = get_db_connection()
         cur = conn.cursor()
         
-        # Assuming the incoming JSON matches the license plate format
         if "detections" in data:
             for detection in data["detections"]:
                 cur.execute(
@@ -34,11 +36,10 @@ def receive_data():
         cur.close()
         conn.close()
         print("Data saved to RDS")
+        return {"status": "success"}, 200
     except Exception as e:
         print(f"Error saving to RDS: {str(e)}")
         return {"status": "error", "message": str(e)}, 500
-
-    return {"status": "success"}, 200
 
 @app.route('/', methods=['GET'])
 def home():
@@ -53,7 +54,9 @@ def home():
         detections = [{"id": row[0], "time": row[1].isoformat(), "license_plate_text": row[2]} for row in rows]
         return render_template('index.html', detections=detections)
     except Exception as e:
+        print(f"Error fetching data: {str(e)}")
         return f"Error: {str(e)}", 500
 
 if __name__ == "__main__":
+    # For local testing only; Gunicorn is used in Docker
     app.run(host='0.0.0.0', port=8080)
