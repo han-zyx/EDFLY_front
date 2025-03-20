@@ -1,10 +1,10 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, request, render_template, jsonify
 import psycopg2
 import os
 
 app = Flask(__name__)
 
-# Database connection
+# Database connection using environment variables
 def get_db_connection():
     return psycopg2.connect(
         host=os.getenv("DB_HOST"),
@@ -13,7 +13,34 @@ def get_db_connection():
         password=os.getenv("DB_PASS")
     )
 
-@app.route('/')
+@app.route('/receive', methods=['POST'])
+def receive_data():
+    data = request.json
+    print(f"Received on EC2: {data}")
+    
+    # Optionally save received data to RDS
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # Assuming the incoming JSON matches the license plate format
+        if "detections" in data:
+            for detection in data["detections"]:
+                cur.execute(
+                    "INSERT INTO license_plates (id, detection_time, license_plate_text) VALUES (%s, %s, %s) ON CONFLICT (id) DO UPDATE SET detection_time = EXCLUDED.detection_time, license_plate_text = EXCLUDED.license_plate_text",
+                    (detection["id"], detection["time"].replace("Z", "").replace("T", " "), detection["license_plate_text"])
+                )
+        conn.commit()
+        cur.close()
+        conn.close()
+        print("Data saved to RDS")
+    except Exception as e:
+        print(f"Error saving to RDS: {str(e)}")
+        return {"status": "error", "message": str(e)}, 500
+
+    return {"status": "success"}, 200
+
+@app.route('/', methods=['GET'])
 def home():
     try:
         conn = get_db_connection()
@@ -27,21 +54,6 @@ def home():
         return render_template('index.html', detections=detections)
     except Exception as e:
         return f"Error: {str(e)}", 500
-
-@app.route('/data', methods=['GET'])
-def get_data():
-    try:
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute("SELECT id, detection_time, license_plate_text FROM license_plates ORDER BY detection_time DESC")
-        rows = cur.fetchall()
-        cur.close()
-        conn.close()
-
-        data = [{"id": row[0], "time": row[1].isoformat(), "license_plate_text": row[2]} for row in rows]
-        return jsonify(data)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080)
