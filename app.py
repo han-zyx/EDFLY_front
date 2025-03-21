@@ -4,7 +4,8 @@ import os
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
-#Database connection using environment variables
+
+
 def get_db_connection():
     try:
         return psycopg2.connect(
@@ -16,6 +17,7 @@ def get_db_connection():
     except Exception as e:
         print(f"Database connection failed: {str(e)}")
         raise
+    
     
     
 @app.route('/receive', methods=['POST'])
@@ -149,3 +151,7 @@ def about():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080)
+    
+    
+    
+    
