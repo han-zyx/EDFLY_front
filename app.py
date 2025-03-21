@@ -1,166 +1,12 @@
-# from flask import Flask, request, render_template, jsonify
-# import psycopg2
-# import os
-
-# app = Flask(__name__, template_folder='templates', static_folder='static')
-
-
-
-# def get_db_connection():
-#     try:
-#         return psycopg2.connect(
-#             host=os.getenv("DB_HOST"),
-#             database=os.getenv("DB_NAME"),
-#             user=os.getenv("DB_USER"),
-#             password=os.getenv("DB_PASS")
-#         )
-#     except Exception as e:
-#         print(f"Database connection failed: {str(e)}")
-#         raise
-    
-    
-    
-# @app.route('/receive', methods=['POST'])
-# def receive_data():
-#     data = request.json
-#     print(f"Received on EC2: {data}")
-    
-#     try:
-#         conn = get_db_connection()
-#         cur = conn.cursor()
-        
-#         if "detections" in data:
-#             for detection in data["detections"]:
-#                 cur.execute(
-#                     "INSERT INTO license_plates (detection_id, detection_time, license_plate_text) VALUES (%s, %s, %s)",
-#                     (detection["id"], detection["time"].replace("Z", "").replace("T", " "), detection["license_plate_text"])
-#                 )
-#         conn.commit()
-#         cur.close()
-#         conn.close()
-#         print("Data saved to RDS")
-#         return {"status": "success"}, 200
-#     except Exception as e:
-#         print(f"Error saving to RDS: {str(e)}")
-#         return {"status": "error", "message": str(e)}, 500
-
-# @app.route('/', methods=['GET'])
-# def home():
-#     try:
-#         conn = get_db_connection()
-#         cur = conn.cursor()
-#         cur.execute("SELECT record_id, detection_id, detection_time, license_plate_text FROM license_plates ORDER BY detection_time DESC")
-#         rows = cur.fetchall()
-#         cur.close()
-#         conn.close()
-
-#         detections = [
-#             {
-#                 "record_id": row[0],
-#                 "id": row[1],
-#                 "time": row[2].isoformat(),
-#                 "license_plate_text": row[3]
-#             } for row in rows
-#         ]
-#         return render_template('index.html', detections=detections)
-#     except Exception as e:
-#         print(f"Error fetching data: {str(e)}")
-#         return f"Error: {str(e)}", 500
-
-# @app.route('/detections', methods=['GET'])
-# def detections():
-#     try:
-#         conn = get_db_connection()
-#         cur = conn.cursor()
-
-#         # Pagination settings
-#         items_per_page = 10
-#         page = request.args.get('page', 1, type=int)  # Default to page 1
-#         offset = (page - 1) * items_per_page
-
-#         # Get date filter parameters from query string
-#         start_date = request.args.get('start_date')
-#         end_date = request.args.get('end_date')
-
-#         # Base query for counting total records
-#         count_query = "SELECT COUNT(*) FROM license_plates"
-#         count_params = []
-
-#         # Base query for fetching paginated records
-#         query = "SELECT record_id, detection_id, detection_time, license_plate_text FROM license_plates"
-#         params = []
-
-#         # Add date filters if provided
-#         if start_date and end_date:
-#             count_query += " WHERE detection_time BETWEEN %s AND %s"
-#             query += " WHERE detection_time BETWEEN %s AND %s"
-#             count_params.extend([start_date, end_date])
-#             params.extend([start_date, end_date])
-#         elif start_date:
-#             count_query += " WHERE detection_time >= %s"
-#             query += " WHERE detection_time >= %s"
-#             count_params.append(start_date)
-#             params.append(start_date)
-#         elif end_date:
-#             count_query += " WHERE detection_time <= %s"
-#             query += " WHERE detection_time <= %s"
-#             count_params.append(end_date)
-#             params.append(end_date)
-
-#         # Add sorting and pagination
-#         query += " ORDER BY record_id DESC LIMIT %s OFFSET %s"
-#         params.extend([items_per_page, offset])
-
-#         # Execute count query
-#         cur.execute(count_query, count_params)
-#         total_detections = cur.fetchone()[0]
-
-#         # Calculate total pages
-#         total_pages = (total_detections + items_per_page - 1) // items_per_page
-
-#         # Execute paginated query
-#         cur.execute(query, params)
-#         rows = cur.fetchall()
-#         cur.close()
-#         conn.close()
-
-#         detections = [
-#             {
-#                 "record_id": row[0],
-#                 "id": row[1],
-#                 "time": row[2].isoformat(),
-#                 "license_plate_text": row[3]
-#             } for row in rows
-#         ]
-
-#         return render_template(
-#             'detections.html',
-#             detections=detections,
-#             total_detections=total_detections,
-#             items_per_page=items_per_page,
-#             current_page=page,
-#             total_pages=total_pages
-#         )
-#     except Exception as e:
-#         print(f"Error fetching data: {str(e)}")
-#         return f"Error: {str(e)}", 500
-
-# @app.route('/about', methods=['GET'])
-# def about():
-#     return render_template('about.html')
-
-# if __name__ == "__main__":
-#     app.run(host='0.0.0.0', port=8080)
-    
-    
-
 from flask import Flask, request, render_template, jsonify
 import psycopg2
 import os
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates', static_folder='static')
 
-# Database connection using environment variables
+
+
+
 def get_db_connection():
     try:
         return psycopg2.connect(
@@ -172,7 +18,10 @@ def get_db_connection():
     except Exception as e:
         print(f"Database connection failed: {str(e)}")
         raise
-
+    
+    
+    
+    
 @app.route('/receive', methods=['POST'])
 def receive_data():
     data = request.json
@@ -207,13 +56,12 @@ def home():
         cur.close()
         conn.close()
 
-        # Map database fields to front-end expected keys
         detections = [
             {
-                "record_id": row[0],           # Unique record ID
-                "id": row[1],                  # Detection ID from JSON
-                "time": row[2].isoformat(),    # Detection time
-                "license_plate_text": row[3]   # License plate text
+                "record_id": row[0],
+                "id": row[1],
+                "time": row[2].isoformat(),
+                "license_plate_text": row[3]
             } for row in rows
         ]
         return render_template('index.html', detections=detections)
@@ -221,6 +69,91 @@ def home():
         print(f"Error fetching data: {str(e)}")
         return f"Error: {str(e)}", 500
 
+@app.route('/detections', methods=['GET'])
+def detections():
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # Pagination settings
+        items_per_page = 10
+        page = request.args.get('page', 1, type=int)  # Default to page 1
+        offset = (page - 1) * items_per_page
+
+        # Get date filter parameters from query string
+        start_date = request.args.get('start_date')
+        end_date = request.args.get('end_date')
+
+        # Base query for counting total records
+        count_query = "SELECT COUNT(*) FROM license_plates"
+        count_params = []
+
+        # Base query for fetching paginated records
+        query = "SELECT record_id, detection_id, detection_time, license_plate_text FROM license_plates"
+        params = []
+
+        # Add date filters if provided
+        if start_date and end_date:
+            count_query += " WHERE detection_time BETWEEN %s AND %s"
+            query += " WHERE detection_time BETWEEN %s AND %s"
+            count_params.extend([start_date, end_date])
+            params.extend([start_date, end_date])
+        elif start_date:
+            count_query += " WHERE detection_time >= %s"
+            query += " WHERE detection_time >= %s"
+            count_params.append(start_date)
+            params.append(start_date)
+        elif end_date:
+            count_query += " WHERE detection_time <= %s"
+            query += " WHERE detection_time <= %s"
+            count_params.append(end_date)
+            params.append(end_date)
+
+        # Add sorting and pagination
+        query += " ORDER BY record_id DESC LIMIT %s OFFSET %s"
+        params.extend([items_per_page, offset])
+
+        # Execute count query
+        cur.execute(count_query, count_params)
+        total_detections = cur.fetchone()[0]
+
+        # Calculate total pages
+        total_pages = (total_detections + items_per_page - 1) // items_per_page
+
+        # Execute paginated query
+        cur.execute(query, params)
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+
+        detections = [
+            {
+                "record_id": row[0],
+                "id": row[1],
+                "time": row[2].isoformat(),
+                "license_plate_text": row[3]
+            } for row in rows
+        ]
+
+        return render_template(
+            'detections.html',
+            detections=detections,
+            total_detections=total_detections,
+            items_per_page=items_per_page,
+            current_page=page,
+            total_pages=total_pages
+        )
+    except Exception as e:
+        print(f"Error fetching data: {str(e)}")
+        return f"Error: {str(e)}", 500
+
+@app.route('/about', methods=['GET'])
+def about():
+    return render_template('about.html')
+
 if __name__ == "__main__":
-    # For local testing only; Gunicorn is used in Docker
     app.run(host='0.0.0.0', port=8080)
+    
+    
+    
+    
