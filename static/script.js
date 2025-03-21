@@ -1,10 +1,20 @@
-function sendData() {
-    fetch('/receive', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: 'Hello from EDFLY!' })
-    })
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch(error => console.error('Error:', error));
-}
+document.addEventListener('DOMContentLoaded', function() {
+    // Add active class to current page link
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    navLinks.forEach(link => {
+        if (link.getAttribute('href') === currentPage) {
+            link.classList.add('active');
+        }
+    });
+
+    // Add table row click handler (optional)
+    const tableRows = document.querySelectorAll('.table tbody tr');
+    tableRows.forEach(row => {
+        row.addEventListener('click', function() {
+            console.log('Row clicked:', this.cells[3].textContent);
+            // Add your row click functionality here
+        });
+    });
+});
