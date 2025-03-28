@@ -3,57 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>License Plate Detections</title>
+    <title>EDFLY</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/x-icon" href="static/images/favicon.png">
+    <style>
+       
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#">Plate Detector</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/detections">Detections</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/about">About</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <!-- header -->
+    {% include 'components/navbar.html' %}
 
     <div class="container mt-4">
-        <h1 class="text-center mb-4">Welcome to License Plate Detector</h1>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">View Detections</h5>
-                        <p class="card-text">Check all recorded license plate detections</p>
-                        <a href="/detections" class="btn btn-primary">Go to Detections</a>
-                    </div>
+        <!-- Image Carousel -->
+        <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="static/images/1.webp" class="d-block w-100" alt="Image 1">
+                </div>
+                <div class="carousel-item">
+                    <img src="static/images/2.png" class="d-block w-100" alt="Image 2">
+                </div>
+                <div class="carousel-item">
+                    <img src="static/images/3.webp" class="d-block w-100" alt="Image 3">
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">About System</h5>
-                        <p class="card-text">Learn more about the detection system</p>
-                        <a href="/about" class="btn btn-primary">Learn More</a>
-                    </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
+        </div>
+
+        <!-- Intro Sections -->
+
+<div>
+
+    <h1 class="text-center mt-5">EDFLY – Revolutionizing Edge to Cloud Data Streaming</h1>
+
+<p class="fs-4 py-5 herotext">
+    EDFLY is an innovative real-time data streaming and monitoring solution designed to optimize edge computing environments. By seamlessly integrating Apache Flink, YOLOv8 object detection, and cloud-based analytics, EDFLY enables businesses to process, analyze, and visualize real-time data with minimal latency. Whether managing IoT devices, monitoring live video streams, 
+    or optimizing cloud-edge workflows, EDFLY ensures high efficiency, scalability, and reliability for next-generation applications.
+</p>
+</div>
+
+        <div class="container ">
+
+            <div class="row align-items-center zigzag-section">
+                <div class="col-md-6">
+                    <h2 class="section-title">About</h2>
+                    <p>EDFLY is a cutting-edge edge-to-cloud data streaming and monitoring solution designed to enhance real-time data processing in distributed environments. By integrating Apache Flink for stream processing, YOLOv8 for object detection, and Prometheus-Grafana for monitoring, EDFLY ensures seamless and low-latency data flow between edge devices and the cloud. This system empowers businesses
+                         and researchers with real-time analytics, making it ideal for smart surveillance, IoT applications, and industrial automation.</p>
                 </div>
+                <div class="col-md-6 text-center">
+                    <img src="static/images/1.webp" class="img-fluid" alt="About Image">
+                </div>
+            </div>
+
+
+            <div class="row align-items-center zigzag-section">
+                <div class="col-md-6 text-center">
+                    <img src="static/images/1.webp" class="img-fluid" alt="Why Image">
+                </div>
+                <div class="col-md-6">
+                    <h2 class="section-title">Why?</h2>
+                    <p>With the growing demand for real-time data processing, traditional cloud-based architectures struggle with high latency, bandwidth limitations, and reliability issues. EDFLY addresses these challenges by leveraging edge computing, reducing dependency on centralized servers, and enabling faster decision-making. It is designed for scalability, 
+                        allowing multiple edge devices to process and stream data efficiently while ensuring data accuracy and security.</p>
+                </div>
+            </div>
+
+
+
+            <div class="row align-items-center zigzag-section">
+                <div class="col-md-6">
+                    <h2 class="section-title">Research Gap</h2>
+                    <p>Existing real-time data processing solutions primarily focus on cloud-based architectures, which often introduce latency and network dependency issues. While edge computing offers a solution, there is a lack of integrated frameworks that combine stream processing,
+                         real-time object detection, and efficient monitoring in a single system. Additionally, many current approaches struggle with seamless integration between edge devices and cloud platforms, leading to inefficiencies in data management and decision-making.</p>
+                </div>
+                <div class="col-md-6 text-center">
+                    <img src="static/images/1.webp" class="img-fluid" alt="Research Gap Image">
+                </div>
+            </div>
+
+
+            <div class="row align-items-center zigzag-section">
+                <div class="col-md-6 text-center">
+                    <img src="static/images/1.webp" class="img-fluid" alt="Solution Image">
+                </div>
+                <div class="col-md-6">
+                    <h2 class="section-title">Solution</h2>
+                    <p>Our deep learning model processes real-time video feeds to extract and identify license plates with high accuracy.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diagrams Section with Show More Button -->
+        <div class="mt-4" id="diagramsSection">
+            <h2 class="section-title">Diagrams</h2>
+            <p>Illustrations and explanations of the system's architecture.</p>
+            <button class="btn btn-primary" id="showMoreBtn">Show More</button>
+            <div id="moreDiagrams" style="display: none;" class="mt-3">
+                <img src="static/images/diagram1.jpg" class="img-fluid" alt="Diagram 1">
+                <img src="static/images/diagram2.jpg" class="img-fluid mt-2" alt="Diagram 2">
             </div>
         </div>
     </div>
 
+    <!-- Footer -->
+    {% include 'components/footer.html' %}
+
+ 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>

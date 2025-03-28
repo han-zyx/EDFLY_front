@@ -1,11 +1,20 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Oswald:wght@200..700&display=swap');
 body {
-    background-color: #f4f4f4;
+    background-color: #ffffff;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    font-style: normal;
 }
 
-.navbar {
-    margin-bottom: 20px;
+.herotext{
+    text-align: justify;
 }
+
 
 .card {
     transition: transform 0.2s;
@@ -21,9 +30,36 @@ body {
 }
 
 
-body {
-    background-color: #ffffff;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+.navbar {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+.navbar-nav {
+    margin-left: auto;
+}
+.carousel img {
+    height: 600px;
+    object-fit: cover;
+}
+.card {
+    transition: transform 0.3s;
+}
+.card:hover {
+    transform: scale(1.05);
+}
+.section-title {
+    margin-top: 40px;
+    border-bottom: 3px solid #007bff;
+    display: inline-block;
+    padding-bottom: 5px;
+}
+.zigzag-section:nth-child(even) {
+    flex-direction: row-reverse;
+}
+.footer {
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 40px;
 }
