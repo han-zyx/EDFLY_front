@@ -7,31 +7,19 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 
 
 
-# def get_db_connection():
-#     try:
-#         return psycopg2.connect(
-#             host=os.getenv("DB_HOST"),
-#             database=os.getenv("DB_NAME"),
-#             user=os.getenv("DB_USER"),
-#             password=os.getenv("DB_PASS")
-#         )
-#     except Exception as e:
-#         print(f"Database connection failed: {str(e)}")
-#         raise
-    
-    
 def get_db_connection():
     try:
         return psycopg2.connect(
-            host="edflydb.clcy0ayas2pc.ap-south-1.rds.amazonaws.com",  # Replace with your RDS endpoint
-            database="licenseplatesdb",           # Replace with your database name
-            user="edfly_admin",                    # Replace with your DB username
-            password="ranolika098",                # Replace with your DB password
-            port="5432"                              # Default PostgreSQL port (adjust if different)
+            host=os.getenv("DB_HOST"),
+            database=os.getenv("DB_NAME"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASS")
         )
     except Exception as e:
         print(f"Database connection failed: {str(e)}")
         raise
+    
+    
 
     
     
