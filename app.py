@@ -5,8 +5,6 @@ import os
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
 
-
-
 def get_db_connection():
     try:
         return psycopg2.connect(
@@ -18,11 +16,6 @@ def get_db_connection():
     except Exception as e:
         print(f"Database connection failed: {str(e)}")
         raise
-    
-    
-
-    
-    
     
     
 @app.route('/receive', methods=['POST'])
@@ -77,25 +70,20 @@ def detections():
     try:
         conn = get_db_connection()
         cur = conn.cursor()
-
-        # Pagination settings
+       
         items_per_page = 10
-        page = request.args.get('page', 1, type=int)  # Default to page 1
+        page = request.args.get('page', 1, type=int)  
         offset = (page - 1) * items_per_page
-
-        # Get date filter parameters from query string
+    
         start_date = request.args.get('start_date')
         end_date = request.args.get('end_date')
-
-        # Base query for counting total records
+      
         count_query = "SELECT COUNT(*) FROM license_plates"
         count_params = []
-
-        # Base query for fetching paginated records
+      
         query = "SELECT record_id, detection_id, detection_time, license_plate_text FROM license_plates"
         params = []
-
-        # Add date filters if provided
+       
         if start_date and end_date:
             count_query += " WHERE detection_time BETWEEN %s AND %s"
             query += " WHERE detection_time BETWEEN %s AND %s"
@@ -111,19 +99,15 @@ def detections():
             query += " WHERE detection_time <= %s"
             count_params.append(end_date)
             params.append(end_date)
-
-        # Add sorting and pagination
+        
         query += " ORDER BY record_id DESC LIMIT %s OFFSET %s"
         params.extend([items_per_page, offset])
-
-        # Execute count query
+       
         cur.execute(count_query, count_params)
         total_detections = cur.fetchone()[0]
-
-        # Calculate total pages
+      
         total_pages = (total_detections + items_per_page - 1) // items_per_page
-
-        # Execute paginated query
+      
         cur.execute(query, params)
         rows = cur.fetchall()
         cur.close()
