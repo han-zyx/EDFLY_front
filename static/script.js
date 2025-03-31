@@ -1,17 +1,4 @@
 
-
-// document.getElementById("showMoreBtn").addEventListener("click", function() {
-//     document.getElementById("moreDiagrams").style.display = "block";
-//     this.style.display = "none";
-// });
-
-
-// document.getElementById("showMoreBtn").addEventListener("click", function() {
-//     document.getElementById("moreDiagrams").style.display = "block";
-//     this.style.display = "none";
-// });
-
-
 document.addEventListener('DOMContentLoaded', function() {
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     const navLinks = document.querySelectorAll('.nav-link');
